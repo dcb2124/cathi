@@ -1,0 +1,113 @@
+/* Style for the chat window container */
+.chat-window {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 30vw;
+  height: 60vh;
+  max-height: 80vh;
+  border-radius: 10px 0 0 10px;
+  background-color: #f6f6f6;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .chat-window {
+    width: 80vw;
+    height: 70vh;
+    max-height: none;
+    border-radius: 10px 10px 0 0;
+  }
+}
+
+/* Style for the chat history element */
+#chat-history {
+  height: 80%;
+  padding: 10px;
+}
+
+/* Style for the chat input element */
+#chat-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 20%;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+
+.chat-input input[type="text"] {
+  border: 2px solid #ccc;
+  background-color: #f8f8f8;
+  padding: 10px;
+  width: 80%;
+  margin-right: 10px;
+  font-size: 16px;
+  outline: none;
+}
+
+.chat-input button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.chat-input button:hover {
+  background-color: #3e8e41;
+}
+
+
+/* Style for the user input field */
+#user-input {
+  flex: 1;
+  margin-right: 10px;
+  padding: 5px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+}
+
+/* Style for the send button */
+#send-btn {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* Style for the chat message bubbles */
+.user-message,
+.chatbot-message {
+  display: inline-block;
+  max-width: 70%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Style for the user message bubbles */
+.user-message {
+  background-color: #007bff;
+  color: white;
+  float: right;
+}
+
+/* Style for the chatbot message bubbles */
+.chatbot-message {
+  background-color: #f1f0f0;
+  color: black;
+  float: left;
+}

@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Cathi - Your AI Conversation Partner</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      .container {
+        display: flex;
+        justify-content: space-between;
+      }
+      .window {
+        border: 1px solid #ccc;
+        padding: 20px;
+        width: 30%;
+        min-height: 500px;
+        overflow-y: scroll;
+      }
+      #conversation {
+        white-space: pre-wrap;
+      }
+      .word {
+        cursor: pointer;
+      }
+      #context-menu {
+        position: absolute;
+        display: none;
+        background: white;
+        border: 1px solid #ccc;
+        padding: 5px;
+        z-index: 100;
+      }
+    </style>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+          padding: 20px;
+        }
+        
+        h1 {
+          font-size: 2rem;
+          color: #333;
+          margin-bottom: 20px;
+        }
+        
+        #user_input {
+          width: 100%;
+          max-width: 600px;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+        
+        button {
+          background-color: #007bff;
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          padding: 10px 15px;
+          margin-left: 10px;
+          cursor: pointer;
+        }
+        
+        button:hover {
+          background-color: #0056b3;
+        }
+        
+        .container {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 20px;
+        }
+        
+        .window {
+          border: 1px solid #ccc;
+          padding: 20px;
+          width: 30%;
+          min-height: 500px;
+          background-color: #fff;
+          border-radius: 5px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          overflow-y: scroll;
+        }
+        
+        #conversation {
+          white-space: pre-wrap; 
+        }
+        
+        .word {
+          cursor: pointer;
+          color: #007bff;
+        }
+        
+        #context-menu {
+          position: absolute;
+          display: none;
+          background: white;
+          border: 1px solid #ccc;
+          padding: 5px;
+          z-index: 100;
+          border-radius: 5px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        #context-menu > div {
+          padding: 5px;
+          cursor: pointer;
+        }
+        
+        #context-menu > div:hover {
+          background-color: #f5f5f5;
+        }
+        #cathi-thumbnail {
+          width: 150px;
+          height: 150px;
+          border-radius: 50%;
+          margin-right: 10px;
+          vertical-align: middle;
+        }
+    </style>
+  </head>
+  <body>
+      
+    <h1>
+        <img src="/static/cathi.png" alt="Cathi" id="cathi-thumbnail">
+        Cathi - Your AI Language Partner
+    </h1>
+    <div id="instructions">
+      <p>Tell Cathi what language you want to speak.</p>
+      <p>Highlight any text to have her explain words or phrases you don't understand, or add them to your vocabulary list.</p>
+      <p>You can edit the vocabulary list directly by clicking on the entries.</p>
+      <p>Finally, you can export the contents of your conversation to .txt.</p>
+    </div>
+    <input type="text" id="user_input" placeholder="Which language do you want to speak?">
+    <button id="send">Send</button>
+    <div class="container">
+      <div id="conversation" class="window"></div>
+      <div id="definitions" class="window">Explanations:</div>
+      <div id="vocabulary-list" class="window">Vocabulary:</div>
+
+    </div>
+    <div id="context-menu">
+        <div id="explain-selection">Explain selection</div>
+        <div id="copy-selection">Copy selection</div>
+        <div id="add-to-vocab">Add to vocabulary list</div>
+    </div>
+
+    <script>
+      let selectedWord = "";
+
+      function send_message() {
+        let user_input = $("#user_input").val();
+        $.ajax({
+          type: "POST",
+          contentType: "application/json",
+          url: "/ask_cathi",
+          data: JSON.stringify({ input: user_input }),
+          success: function (data) {
+            let response_text = data.response;
+            let response_html = '<div><strong>Cathi:</strong> <span style="color: #007bff;">';
+
+            response_html += response_text;
+            response_html += '</span></div>';
+
+            $("#conversation").append('<div><strong>You:</strong> ' + user_input + "</div>");
+            $("#conversation").append(response_html);
+            $("#user_input").val("");
+          },
+          error: function () {
+            alert("Error! Please try again.");
+          },
+        });
+      }
+      
+    function explain_selection() {
+        $.ajax({
+            type: "POST",
+            url: "/explain_selection",
+            data: { selection: selectedWord },
+            success: function (data) {
+                $("#definitions").append('<div><strong>' + selectedWord + ':</strong> ' + data.explanation + '</div>');
+            },
+            error: function () {
+                alert("Error explaining selection. Please try again.");
+            },
+        });
+        }      
+      
+    function add_to_vocabulary(word) {
+          let vocab_item = $('<div>').attr('contenteditable', true).text(word);
+          $("#vocabulary-list").append(vocab_item);
+    }
+
+
+    $(document).ready(function () {
+        $("#send").click(send_message);
+    
+        $("body").on("mouseup", function (event) {
+            let selection = window.getSelection().toString().trim();
+            if (selection && event.target.tagName !== "INPUT") {
+                selectedWord = selection;
+                $("#context-menu").css({ top: event.pageY, left: event.pageX }).show();
+            } else {
+                $("#context-menu").hide();
+            }
+        });
+    
+        $("#explain-selection").on("click", function () {
+            $("#context-menu").hide();
+            explain_selection();
+        });
+    
+        $("#copy-selection").on("click", function () {
+            $("#context-menu").hide();
+            navigator.clipboard.writeText(selectedWord)
+                .then(() => alert('Copied to clipboard: ' + selectedWord))
+                .catch((err) => alert('Failed to copy to clipboard: ' + err));
+        });
+    
+        $("#add-to-vocab").on("click", function () {
+            $("#context-menu").hide();
+            add_to_vocabulary(selectedWord);
+        });
+    });
+    </script>
+
+    <button id="export-btn">Export Conversation</button>
+    
+    <script>
+      // add a click event listener to the export button
+      $("#export-btn").on("click", function() {
+          let conversation = $("#conversation").html().replace(/<\/div><div>/g, "\n").replace(/<\/?strong>/g, "").replace(/<.*?>/g, "");
+          let vocabularyList = $("#vocabulary-list").html().replace(/<div contenteditable="true">/g, "\n").replace(/<\/div>/g, "")
+          let definitions = $("#definitions").html();
+          
+          
+        
+          // create a Blob object with the contents
+          let data = new Blob([conversation + "\n\n" + definitions + "\n\n" + vocabularyList], { type: "text/plain" });
+        
+          // create a download link and click it to trigger the download
+          let a = document.createElement("a");
+          a.href = URL.createObjectURL(data);
+          a.download = "conversation.txt";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+      });
+    </script>
+
+
+  </body>
+</html>
