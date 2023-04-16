@@ -9,7 +9,7 @@ from flask import Flask, request, jsonify, render_template
 import requests
 import openai
 import os
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import logging
 
 app = Flask(__name__)
@@ -93,12 +93,12 @@ def explain_selection():
     reply = response.choices[0].message.content.strip()
     return jsonify({"explanation": reply})
 
-run_server = False
-if run_server:
-    if __name__ == "__main__":
-        load_dotenv()
-        openai.api_key = os.getenv("OPENAI_API_KEY")
-        app.run(debug=False)
+# run_server = False
+# if run_server:
+#     if __name__ == "__main__":
+#         load_dotenv()
+#         openai.api_key = os.getenv("OPENAI_API_KEY")
+#         app.run(debug=False)
 
 
 #test    
