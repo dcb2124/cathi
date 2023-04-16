@@ -93,7 +93,7 @@ def explain_selection():
     reply = response.choices[0].message.content.strip()
     return jsonify({"explanation": reply})
 
-run_server = True
+run_server = False
 if run_server:
     if __name__ == "__main__":
         load_dotenv()
