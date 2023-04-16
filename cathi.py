@@ -9,18 +9,15 @@ from flask import Flask, request, jsonify, render_template
 import requests
 import openai
 import os
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 import logging
 import os
-
-
-openai.api_key = os.environ.get("OPENAI_API_KEY")
-print(os.environ.get("OPENAI_API_KEY"))
 
 
 
 app = Flask(__name__)
 
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def message(role, content):
     return {'role' : role, 'content' : content}
