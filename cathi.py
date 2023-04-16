@@ -14,7 +14,7 @@ import logging
 import os
 
 
-api_key = os.environ.get("OPENAI_API_KEY")
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 print(os.environ.get("OPENAI_API_KEY"))
 
 
