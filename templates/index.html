@@ -248,6 +248,25 @@
           document.body.removeChild(a);
       });
     </script>
+    
+    <p> How can this be improved? (include text of chat/screenshots if possible) </p>
+    <button onclick="sendFeedback()">Send Feedback</button>
+    
+
+    <script>
+      function sendFeedback() {
+        // Get the user's feedback
+        var feedback = prompt("Enter your feedback:");
+    
+        // Create a mailto link with the user's feedback
+        var mailtoLink = "mailto:cathi.chatbot@gmail.com?subject=Feedback&body=" + encodeURIComponent(feedback);
+    
+        // Open the user's email client with the mailto link
+        window.location.href = mailtoLink;
+      }
+    </script>
+
+
 
 
   </body>
