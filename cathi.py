@@ -11,6 +11,11 @@ import openai
 import os
 #from dotenv import load_dotenv
 import logging
+import os
+
+
+api_key = os.environ.get("OPENAI_API_KEY")
+
 
 app = Flask(__name__)
 
